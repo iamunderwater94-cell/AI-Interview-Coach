@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --sidebar-width: 256px;
+
+  /* Brand Colors (Light) */
+  --brand-50: 245, 243, 255;
+  --brand-100: 237, 233, 254;
+  --brand-200: 221, 214, 254;
+  --brand-300: 196, 181, 253;
+  --brand-400: 167, 139, 250;
+  --brand-500: 139, 92, 246;
+  --brand-600: 124, 58, 237;
+  --brand-700: 109, 40, 217;
+  --brand-800: 91, 33, 182;
+  --brand-900: 76, 29, 149;
+
+  /* Gray Colors (Light) */
+  --gray-50: 249, 250, 251;
+  --gray-100: 243, 244, 246;
+  --gray-200: 229, 231, 235;
+  --gray-300: 209, 213, 219;
+  --gray-400: 156, 163, 175;
+  --gray-500: 107, 114, 128;
+  --gray-600: 75, 85, 99;
+  --gray-700: 55, 65, 81;
+  --gray-800: 31, 41, 55;
+  --gray-900: 17, 24, 39;
+
+  /* Lavender Colors (Light) */
+  --lavender-50: 253, 250, 252;
+  --lavender-100: 250, 238, 247;
+  --lavender-200: 242, 218, 239;
+  --lavender-300: 234, 188, 237;
+  --lavender-400: 227, 157, 235;
+  --lavender-500: 218, 112, 214;
+  --lavender-600: 194, 75, 194;
+  --lavender-700: 157, 51, 157;
+  --lavender-800: 122, 39, 122;
+  --lavender-900: 92, 34, 92;
+  --lavender-950: 59, 18, 59;
+
+  --bg-main: #fdfafc;
+  --text-main: #3b123b;
+  
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(139, 92, 246, 0.1);
+  --glass-hover-bg: rgba(255, 255, 255, 0.8);
+  --glass-hover-border: rgba(139, 92, 246, 0.2);
+}
+
+.dark {
+  /* Brand Colors Dark (Neon focus) */
+  --brand-50: 15, 10, 25;
+  --brand-100: 25, 15, 45;
+  --brand-200: 45, 25, 75;
+  --brand-300: 75, 45, 130;
+  
+  /* Gray Colors (Inverted for Dark Mode) */
+  --gray-50: 17, 24, 39;
+  --gray-100: 31, 41, 55;
+  --gray-200: 55, 65, 81;
+  --gray-300: 75, 85, 99;
+  --gray-400: 107, 114, 128;
+  --gray-500: 156, 163, 175;
+  --gray-600: 209, 213, 219;
+  --gray-700: 229, 231, 235;
+  --gray-800: 243, 244, 246;
+  --gray-900: 249, 250, 251;
+
+  /* Lavender Inverted (Dark BG, bright text) */
+  --lavender-50: 9, 5, 15;
+  --lavender-100: 15, 10, 22;
+  --lavender-200: 22, 14, 32;
+  --lavender-300: 35, 20, 50;
+  --lavender-400: 55, 30, 80;
+  /* Keeping accents vibrant */
+  --lavender-700: 227, 157, 235;
+  --lavender-800: 234, 188, 237;
+  --lavender-900: 250, 238, 247;
+  --lavender-950: 253, 250, 252;
+
+  --bg-main: #09050f;
+  --text-main: #fdfafc;
+
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-hover-bg: rgba(255, 255, 255, 0.06);
+  --glass-hover-border: rgba(139, 92, 246, 0.2);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-inter);
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(124, 58, 237, 0.4);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(218, 112, 214, 0.2);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(218, 112, 214, 0.4);
+  }
+}
+
+@layer components {
+  .glass {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(24px);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), 0 8px 32px rgba(218,112,214,0.1);
+  }
+
+  .glass-hover {
+    transition: all 0.2s ease-in-out;
+  }
+  .glass-hover:hover {
+    background-color: var(--glass-hover-bg);
+    border-color: var(--glass-hover-border);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(218,112,214,0.3), rgba(6,182,212,0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .mesh-bg {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 30%, rgba(218,112,214,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 70%, rgba(234,188,237,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 50% 0%, rgba(194,75,194,0.08) 0%, transparent 60%);
+  }
+
+  .noise-bg {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .score-ring {
+    transform-origin: center;
+    transform: rotate(-90deg);
+  }
+
+  .audio-bar {
+    @apply rounded-full bg-gradient-to-t from-brand-600 to-brand-400 transition-all;
+    animation: wave 0.8s ease-in-out infinite;
+  }
+
+  .audio-bar:nth-child(2)  { animation-delay: 0.1s; }
+  .audio-bar:nth-child(3)  { animation-delay: 0.2s; }
+  .audio-bar:nth-child(4)  { animation-delay: 0.3s; }
+  .audio-bar:nth-child(5)  { animation-delay: 0.4s; }
+  .audio-bar:nth-child(6)  { animation-delay: 0.3s; }
+  .audio-bar:nth-child(7)  { animation-delay: 0.2s; }
+  .audio-bar:nth-child(8)  { animation-delay: 0.1s; }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .text-balance { text-wrap: balance; }
+
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+}

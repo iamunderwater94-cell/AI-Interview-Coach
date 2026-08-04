@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                 String      @id @default(uuid())
+  email              String      @unique
+  name               String?
+  password           String      // Store hashed password
+  targetRole         String?
+  experienceLevel    String?
+  preferredLanguage  String?
+  onboardingComplete Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  interviews         Interview[]
+}
+
+model Interview {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  role         String
+  difficulty   String
+  experience   String
+  language     String
+  status       String       @default("pending") // pending, in_progress, completed, abandoned
+  overallScore Float?
+  technicalAvg Float?
+  grammarAvg   Float?
+  clarityAvg   Float?
+  duration     Int?
+  startedAt    DateTime     @default(now())
+  completedAt  DateTime?
+  questions    Question[]
+  evaluations  Evaluation[]
+}
+
+model Question {
+  id          String      @id @default(uuid())
+  interviewId String
+  interview   Interview   @relation(fields: [interviewId], references: [id])
+  text        String
+  type        String      // technical, behavioral, situational
+  category    String
+  hint        String?
+  timeLimit   Int?
+}
+
+model Evaluation {
+  id             String    @id @default(uuid())
+  interviewId    String
+  interview      Interview @relation(fields: [interviewId], references: [id])
+  questionId     String
+  technicalScore Float
+  grammarScore   Float
+  clarityScore   Float
+  overallScore   Float
+  strengths      String    // Will store as JSON string or comma-separated
+  weaknesses     String    // Will store as JSON string or comma-separated
+  improvedAnswer String?
+  feedback       String
+}
