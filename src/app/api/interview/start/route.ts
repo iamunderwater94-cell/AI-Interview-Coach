@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
 import prisma from '@/lib/db'
 import jwt from 'jsonwebtoken'
-import pdfParse from 'pdf-parse'
-import Tesseract from 'tesseract.js'
-
+// Imports removed for dynamic loading
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
@@ -29,9 +27,15 @@ export async function POST(req: Request) {
           const buffer = Buffer.from(arrayBuffer)
           
           if (resumeFile.type === 'application/pdf') {
-            const parsed = await pdfParse(buffer)
-            resumeText = parsed.text
+            const PDFParser = (await import('pdf2json')).default;
+            resumeText = await new Promise((resolve, reject) => {
+              const pdfParser = new PDFParser(null, 1);
+              pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+              pdfParser.on("pdfParser_dataReady", () => resolve((pdfParser as any).getRawTextContent()));
+              pdfParser.parseBuffer(buffer);
+            });
           } else if (resumeFile.type.startsWith('image/')) {
+            const Tesseract = (await import('tesseract.js')).default
             const base64Str = buffer.toString('base64')
             const dataUrl = `data:${resumeFile.type};base64,${base64Str}`
             const { data } = await Tesseract.recognize(dataUrl, 'eng')

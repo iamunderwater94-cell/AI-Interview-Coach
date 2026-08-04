@@ -228,11 +228,26 @@ export default function InterviewReportPage({ params }: { params: { id: string }
                   return (
                     <div key={ev.questionId} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                       <div className="flex items-start justify-between gap-3 mb-3">
-                        <p className="text-sm text-gray-600 flex-1">{q?.text || `Question ${i + 1}`}</p>
+                        <p className="text-sm text-gray-600 flex-1 font-medium">{q?.text || `Question ${i + 1}`}</p>
                         <span className={cn('text-lg font-bold flex-shrink-0', getScoreColor(ev.overallScore))}>
                           {ev.overallScore}
                         </span>
                       </div>
+                      
+                      {ev.userAnswer && (
+                        <div className="mb-4 p-3 rounded-lg bg-brand-500/5 border border-brand-500/10">
+                          <p className="text-xs font-semibold text-lavender-950 mb-1">Your Answer:</p>
+                          <p className="text-sm text-gray-700 italic">"{ev.userAnswer}"</p>
+                        </div>
+                      )}
+
+                      {ev.improvedAnswer && (
+                        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                          <p className="text-xs font-semibold text-emerald-900 mb-1">Ideal/Correct Answer:</p>
+                          <p className="text-sm text-emerald-800">{ev.improvedAnswer}</p>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-3 gap-2">
                         {[
                           { label: 'Technical', score: ev.technicalScore },

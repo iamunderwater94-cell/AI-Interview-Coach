@@ -60,3 +60,12 @@ export interface OnboardingPayload {
   experienceLevel: 'fresher' | 'mid' | 'senior'
   preferredLanguage: string
 }
+
+export interface UpdateProfilePayload {
+  name?: string
+  email?: string
+  password?: string
+  targetRole?: string
+  experienceLevel?: string
+  preferredLanguage?: string
+}

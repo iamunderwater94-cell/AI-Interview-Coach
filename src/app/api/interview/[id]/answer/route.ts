@@ -13,6 +13,16 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     let candidateCode = ''
     let codeLanguage = ''
 
+    // Get the interview and question from DB first so we know the language
+    const interview = await prisma.interview.findUnique({
+      where: { id: interviewId },
+      include: { questions: true }
+    })
+
+    if (!interview) {
+      return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
+    }
+
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData()
       questionId = formData.get('questionId') as string
@@ -24,13 +34,20 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         return NextResponse.json({ error: 'Missing questionId or audio' }, { status: 400 })
       }
 
+      let whisperLang = 'en'
+      if (interview.language === 'Spanish') whisperLang = 'es'
+      else if (interview.language === 'French') whisperLang = 'fr'
+      else if (interview.language === 'German') whisperLang = 'de'
+      else if (interview.language === 'Hindi') whisperLang = 'hi'
+      else if (interview.language === 'Portuguese') whisperLang = 'pt'
+
       // Transcribe audio using Groq Whisper
       try {
         const transcription = await groq.audio.transcriptions.create({
           file: audioFile,
           model: 'whisper-large-v3-turbo',
           response_format: 'json',
-          language: 'en'
+          language: whisperLang
         })
         candidateAnswer = transcription.text || "Audio could not be transcribed."
       } catch (err: any) {
@@ -48,16 +65,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
       }
       candidateAnswer = text || ''
-    }
-
-    // Get the interview and question from DB
-    const interview = await prisma.interview.findUnique({
-      where: { id: interviewId },
-      include: { questions: true }
-    })
-
-    if (!interview) {
-      return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
 
     const question = interview.questions.find(q => q.id === questionId)
@@ -163,14 +170,15 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       data: {
         interviewId,
         questionId,
-        technicalScore: evaluationData.technicalScore,
-        grammarScore: evaluationData.grammarScore,
-        clarityScore: evaluationData.clarityScore,
-        overallScore: evaluationData.overallScore,
-        strengths: JSON.stringify(evaluationData.strengths || []),
-        weaknesses: JSON.stringify(evaluationData.weaknesses || []),
-        improvedAnswer: evaluationData.improvedAnswer,
-        feedback: evaluationData.feedback
+        technicalScore: evaluationData.technicalScore || 0,
+        grammarScore: evaluationData.grammarScore || 0,
+        clarityScore: evaluationData.clarityScore || 0,
+        overallScore: evaluationData.overallScore || 0,
+        strengths: JSON.stringify(evaluationData.strengths || ["No strengths identified."]),
+        weaknesses: JSON.stringify(evaluationData.weaknesses || ["No weaknesses identified."]),
+        userAnswer: candidateAnswer || "No answer provided.",
+        improvedAnswer: evaluationData.improvedAnswer || "No improved answer provided.",
+        feedback: evaluationData.feedback || "Good effort. Keep practicing to improve your skills."
       }
     })
 

@@ -1,5 +1,5 @@
 import apiClient from './axios'
-import type { AuthResponse, LoginPayload, OnboardingPayload, RegisterPayload } from '@/types/auth'
+import type { AuthResponse, LoginPayload, OnboardingPayload, RegisterPayload, UpdateProfilePayload } from '@/types/auth'
 
 export const authApi = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
@@ -29,6 +29,11 @@ export const authApi = {
 
   updateOnboarding: async (payload: OnboardingPayload) => {
     const { data } = await apiClient.patch('/auth/onboarding', payload)
+    return data
+  },
+
+  updateProfile: async (payload: UpdateProfilePayload) => {
+    const { data } = await apiClient.patch('/auth/profile', payload)
     return data
   },
 

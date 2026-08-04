@@ -20,6 +20,7 @@ export interface Evaluation {
   overallScore: number
   strengths: string[]
   weaknesses: string[]
+  userAnswer?: string
   improvedAnswer?: string
   feedback: string
 }

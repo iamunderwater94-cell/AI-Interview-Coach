@@ -85,6 +85,21 @@ export function FeedbackOverlay({ evaluation, isLastQuestion, onNext }: Feedback
           <p className="text-sm text-gray-600 leading-relaxed">{evaluation.feedback}</p>
         </div>
 
+        {/* Answers */}
+        {evaluation.userAnswer && (
+          <div className="rounded-xl bg-brand-500/5 border border-brand-500/10 p-3">
+            <p className="text-xs font-semibold text-lavender-950 mb-1">Your Answer</p>
+            <p className="text-sm text-gray-700 italic">"{evaluation.userAnswer}"</p>
+          </div>
+        )}
+
+        {evaluation.improvedAnswer && (
+          <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3">
+            <p className="text-xs font-semibold text-emerald-900 mb-1">Ideal Answer</p>
+            <p className="text-sm text-emerald-800">{evaluation.improvedAnswer}</p>
+          </div>
+        )}
+
         {/* Strengths & Weaknesses */}
         <div className="grid grid-cols-2 gap-3">
           <div>

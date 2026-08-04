@@ -35,7 +35,21 @@ interface ScoreChartProps {
 }
 
 export function ScoreChart({ data }: ScoreChartProps) {
-  const chartData = data && data.length > 0 ? data : MOCK_DATA
+  const chartData = data || []
+
+  if (chartData.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="rounded-2xl border border-brand-500/10 bg-white/[0.04] backdrop-blur-sm p-6 flex flex-col items-center justify-center min-h-[300px]"
+      >
+        <h3 className="text-lg font-semibold text-lavender-950 mb-2">Score Progress</h3>
+        <p className="text-gray-600 text-sm">Complete your first interview to see your progress chart!</p>
+      </motion.div>
+    )
+  }
 
   return (
     <motion.div

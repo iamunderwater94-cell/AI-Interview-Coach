@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils/cn'
 import { useAuthStore } from '@/store/authStore'
 import { authApi } from '@/lib/api/auth'
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Progress } from '@/components/ui/Progress'
 import { getInitials } from '@/lib/utils/format'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -30,17 +31,20 @@ const navItems = [
   { href: '/history', icon: History, label: 'History' },
   { href: '/achievements', icon: Trophy, label: 'Achievements' },
   { href: '/practice', icon: BookOpen, label: 'Practice' },
+  { href: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuthStore()
-  const [collapsed, setCollapsed] = useState(false)
+  const queryClient = useQueryClient()
+  const [collapsed, setCollapsed] = useState(true)
 
   const handleLogout = async () => {
     await authApi.logout()
     logout()
+    queryClient.clear()
     router.push('/login')
   }
 
@@ -51,6 +55,8 @@ export function Sidebar() {
       animate={{ width: collapsed ? 72 : 256 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="relative flex flex-col h-screen bg-lavender-50/95 border-r border-white/[0.06] backdrop-blur-xl flex-shrink-0 overflow-hidden"
+      onMouseEnter={() => setCollapsed(false)}
+      onMouseLeave={() => setCollapsed(true)}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.06]">
@@ -132,9 +138,9 @@ export function Sidebar() {
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-1">
                     <Zap className="h-3 w-3 text-yellow-400" />
-                    <span className="text-xs text-gray-600">Level {user.level}</span>
+                    <span className="text-xs text-gray-600">Level {user.level || 1}</span>
                   </div>
-                  <span className="text-xs text-gray-500">{user.xp}/{user.xpToNextLevel} XP</span>
+                  <span className="text-xs text-gray-500">{user.xp || 0}/{user.xpToNextLevel || 1000} XP</span>
                 </div>
                 <Progress value={xpPct} size="sm" variant="gradient" />
               </motion.div>
@@ -184,13 +190,7 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* Collapse toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3.5 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-white/80 border border-brand-500/10 flex items-center justify-center text-gray-600 hover:text-lavender-950 hover:bg-lavender-100 transition-all duration-200 z-10 shadow-lg"
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
+
     </motion.aside>
   )
 }

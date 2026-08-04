@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Brain, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
@@ -22,6 +23,7 @@ type FormData = z.infer<typeof schema>
 export default function LoginPage() {
   const router = useRouter()
   const { setAuth } = useAuthStore()
+  const queryClient = useQueryClient()
   const [showPassword, setShowPassword] = useState(false)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -45,14 +47,10 @@ export default function LoginPage() {
         }
       }
 
+      queryClient.clear()
       setAuth(userData, authToken)
       toast.success('Welcome back! 👋')
-      
-      if (!userData?.onboardingComplete) {
-        router.push('/onboarding')
-      } else {
-        router.push('/dashboard')
-      }
+      router.push('/dashboard')
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Invalid credentials. Please try again.')
     }
@@ -94,16 +92,16 @@ export default function LoginPage() {
               { stat: '3.2×', label: 'faster interview preparation vs. traditional methods' },
               { stat: '50+', label: 'roles across tech, product, and business' },
             ].map(({ stat, label }) => (
-              <div key={stat} className="flex items-center gap-4">
-                <div className="text-2xl font-bold gradient-text min-w-[64px]">{stat}</div>
-                <div className="text-sm text-gray-600">{label}</div>
+              <div key={stat} className="flex items-center gap-5">
+                <div className="text-3xl font-extrabold text-cyan-400 w-20 shrink-0 text-right tracking-tight">{stat}</div>
+                <div className="text-base text-gray-400">{label}</div>
               </div>
             ))}
           </div>
         </motion.div>
 
-        <div className="relative z-10 text-sm text-gray-600">
-          © 2024 AI Interview Coach
+        <div className="relative z-10 text-sm text-gray-500">
+          © 2026 AI Interview Coach
         </div>
       </div>
 
@@ -131,53 +129,59 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <Input
-              id="email"
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              leftIcon={<Mail className="h-4 w-4" />}
-              error={errors.email?.message}
-              {...register('email')}
-            />
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <Input
+                id="email"
+                label="Email address"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                leftIcon={<Mail className="h-4 w-4" />}
+                error={errors.email?.message}
+                {...register('email')}
+              />
+            </motion.div>
 
-            <Input
-              id="password"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              leftIcon={<Lock className="h-4 w-4" />}
-              rightIcon={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-gray-600 hover:text-lavender-950 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              }
-              error={errors.password?.message}
-              {...register('password')}
-            />
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <Input
+                id="password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                leftIcon={<Lock className="h-4 w-4" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-600 hover:text-lavender-950 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                }
+                error={errors.password?.message}
+                {...register('password')}
+              />
+            </motion.div>
 
-            <div className="flex items-center justify-end">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex items-center justify-end">
               <Link href="/forgot-password" className="text-sm text-brand-600 hover:text-brand-700 transition-colors">
                 Forgot password?
               </Link>
-            </div>
+            </motion.div>
 
-            <Button
-              type="submit"
-              variant="glow"
-              size="lg"
-              className="w-full"
-              isLoading={isSubmitting}
-              rightIcon={<ChevronRight className="h-4 w-4" />}
-            >
-              Sign In
-            </Button>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+              <Button
+                type="submit"
+                variant="glow"
+                size="lg"
+                className="w-full"
+                isLoading={isSubmitting}
+                rightIcon={<ChevronRight className="h-4 w-4" />}
+              >
+                Sign In
+              </Button>
+            </motion.div>
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">

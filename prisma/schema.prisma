@@ -63,6 +63,7 @@ model Evaluation {
   overallScore   Float
   strengths      String    // Will store as JSON string or comma-separated
   weaknesses     String    // Will store as JSON string or comma-separated
+  userAnswer     String?
   improvedAnswer String?
   feedback       String
 }

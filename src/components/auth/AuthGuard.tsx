@@ -19,16 +19,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     if (isAuthenticated && (pathname === '/login' || pathname === '/register')) {
-      if (user && !user.onboardingComplete) {
-        router.replace('/onboarding')
-      } else {
-        router.replace('/dashboard')
-      }
+      router.replace('/dashboard')
       return
-    }
-
-    if (isAuthenticated && user && !user.onboardingComplete && pathname !== '/onboarding') {
-      router.replace('/onboarding')
     }
   }, [isAuthenticated, pathname, router, user])
 

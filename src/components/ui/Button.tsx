@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import { motion, HTMLMotionProps } from 'framer-motion'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils/cn'
 import { Loader2 } from 'lucide-react'
@@ -9,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-gradient-to-r from-brand-500 to-brand-600 text-lavender-950 shadow-lg shadow-brand-500/25 hover:from-brand-400 hover:to-brand-500 hover:shadow-brand-500/40 hover:-translate-y-0.5 active:translate-y-0',
+          'bg-gradient-to-r from-brand-500 to-brand-600 text-lavender-950 shadow-lg shadow-brand-500/25 hover:from-brand-400 hover:to-brand-500 hover:shadow-brand-500/40 hover:-translate-y-0.5',
         secondary:
           'bg-brand-500/5 border border-brand-500/10 text-lavender-950 hover:bg-brand-500/10 hover:border-brand-500/20 hover:-translate-y-0.5 backdrop-blur-sm',
         ghost:
@@ -19,7 +20,7 @@ const buttonVariants = cva(
         outline:
           'border border-brand-400 text-brand-600 hover:bg-brand-500/10 hover:border-brand-500 hover:-translate-y-0.5',
         glow:
-          'bg-gradient-to-r from-brand-500 to-cyan-500 text-lavender-950 shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:-translate-y-0.5 active:translate-y-0',
+          'bg-gradient-to-r from-brand-500 to-cyan-500 text-lavender-950 shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:-translate-y-0.5',
       },
       size: {
         xs: 'h-7 px-3 text-xs',
@@ -38,9 +39,10 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<HTMLMotionProps<"button">, "disabled">,
     VariantProps<typeof buttonVariants> {
   isLoading?: boolean
+  disabled?: boolean
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
 }
@@ -48,8 +50,9 @@ export interface ButtonProps
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, isLoading, leftIcon, rightIcon, children, disabled, ...props }, ref) => {
     return (
-      <button
+      <motion.button
         ref={ref}
+        whileTap={{ scale: 0.90 }}
         className={cn(buttonVariants({ variant, size, className }))}
         disabled={disabled || isLoading}
         {...props}
@@ -61,7 +64,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {children}
         {!isLoading && rightIcon}
-      </button>
+      </motion.button>
     )
   }
 )

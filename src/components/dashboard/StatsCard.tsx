@@ -49,6 +49,7 @@ export function StatsCard({ title, value, suffix = '', prefix = '', description,
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -10, scale: 1.05 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
       className={cn(
         'rounded-2xl border border-brand-500/10 bg-white/[0.04] backdrop-blur-sm p-6 transition-all duration-300',

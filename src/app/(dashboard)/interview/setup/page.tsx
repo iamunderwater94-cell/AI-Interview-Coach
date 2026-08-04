@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Briefcase, Zap, User, Globe, ChevronRight, ArrowLeft, Upload, FileText, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -41,7 +41,7 @@ const EXPERIENCE_LEVELS = [
   { value: 'senior', label: 'Senior', desc: '5+ years', emoji: '⭐' },
 ]
 
-const LANGUAGES = ['English', 'Hindi', 'Spanish', 'French', 'German']
+const LANGUAGES = ['English', 'Hindi', 'Spanish', 'French', 'German', 'Portuguese']
 
 export default function InterviewSetupPage() {
   const router = useRouter()
@@ -60,6 +60,14 @@ export default function InterviewSetupPage() {
       resume: undefined
     },
   })
+
+  useEffect(() => {
+    if (user) {
+      if (user.targetRole) setValue('role', user.targetRole, { shouldValidate: true, shouldDirty: true })
+      if (user.experienceLevel) setValue('experience', user.experienceLevel as any, { shouldValidate: true, shouldDirty: true })
+      if (user.preferredLanguage) setValue('language', user.preferredLanguage, { shouldValidate: true, shouldDirty: true })
+    }
+  }, [user, setValue])
 
   const selectedRole = watch('role')
   const selectedDiff = watch('difficulty')
@@ -110,11 +118,11 @@ export default function InterviewSetupPage() {
               <button
                 key={role}
                 type="button"
-                onClick={() => setValue('role', role)}
+                onClick={() => setValue('role', role, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
                   'px-3 py-2.5 rounded-xl border text-sm font-medium text-left transition-all duration-200',
                   selectedRole === role
-                    ? 'bg-brand-500/20 border-brand-400 text-brand-700'
+                    ? 'bg-purple-100 border-purple-500 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
                     : 'bg-white/[0.03] border-brand-500/10 text-gray-600 hover:bg-brand-500/10 hover:border-brand-500/20'
                 )}
               >
@@ -137,7 +145,7 @@ export default function InterviewSetupPage() {
               <button
                 key={value}
                 type="button"
-                onClick={() => setValue('difficulty', value as any)}
+                onClick={() => setValue('difficulty', value as any, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
                   'p-4 rounded-xl border text-center transition-all duration-200',
                   selectedDiff === value
@@ -164,16 +172,16 @@ export default function InterviewSetupPage() {
             <User className="h-5 w-5 text-cyan-400" />
             <h2 className="text-lg font-semibold text-lavender-950">Experience Level</h2>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {EXPERIENCE_LEVELS.map(({ value, label, desc, emoji }) => (
               <button
                 key={value}
                 type="button"
-                onClick={() => setValue('experience', value as any)}
+                onClick={() => setValue('experience', value as any, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
-                  'p-4 rounded-xl border text-center transition-all duration-200',
+                  'p-4 rounded-xl border text-left transition-all duration-200',
                   selectedExp === value
-                    ? 'bg-brand-500/15 border-brand-500/40 text-brand-700'
+                    ? 'bg-purple-100 border-purple-500 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
                     : 'bg-white/[0.03] border-brand-500/10 text-gray-600 hover:bg-brand-500/10'
                 )}
               >
@@ -197,7 +205,7 @@ export default function InterviewSetupPage() {
               <button
                 key={lang}
                 type="button"
-                onClick={() => setValue('language', lang)}
+                onClick={() => setValue('language', lang, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
                   'px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200',
                   selectedLang === lang

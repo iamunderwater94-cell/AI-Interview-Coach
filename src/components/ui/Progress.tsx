@@ -12,21 +12,21 @@ interface ProgressProps {
 }
 
 const trackColors: Record<string, string> = {
-  default: 'bg-brand-500/10',
-  brand: 'bg-brand-900/50',
-  success: 'bg-emerald-900/50',
-  warning: 'bg-yellow-900/50',
-  danger: 'bg-red-900/50',
-  gradient: 'bg-brand-500/10',
+  default: 'bg-gray-200 dark:bg-gray-800',
+  brand: 'bg-purple-200 dark:bg-purple-900/50',
+  success: 'bg-emerald-200 dark:bg-emerald-900/50',
+  warning: 'bg-yellow-200 dark:bg-yellow-900/50',
+  danger: 'bg-red-200 dark:bg-red-900/50',
+  gradient: 'bg-purple-200 dark:bg-purple-900/50',
 }
 
 const fillColors: Record<string, string> = {
   default: 'bg-gray-400',
-  brand: 'bg-gradient-to-r from-brand-500 to-brand-400',
-  success: 'bg-gradient-to-r from-emerald-600 to-emerald-400',
-  warning: 'bg-gradient-to-r from-yellow-600 to-yellow-400',
-  danger: 'bg-gradient-to-r from-red-600 to-red-400',
-  gradient: 'bg-gradient-to-r from-brand-500 via-purple-500 to-cyan-500',
+  brand: 'bg-gradient-to-r from-purple-500 to-indigo-500',
+  success: 'bg-gradient-to-r from-emerald-500 to-emerald-400',
+  warning: 'bg-gradient-to-r from-yellow-500 to-yellow-400',
+  danger: 'bg-gradient-to-r from-red-500 to-red-400',
+  gradient: 'bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500',
 }
 
 const heights: Record<string, string> = {

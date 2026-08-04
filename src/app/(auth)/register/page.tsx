@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Mail, Lock, User, Brain, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
@@ -27,6 +28,7 @@ type FormData = z.infer<typeof schema>
 export default function RegisterPage() {
   const router = useRouter()
   const { setAuth } = useAuthStore()
+  const queryClient = useQueryClient()
   const [showPassword, setShowPassword] = useState(false)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -50,9 +52,10 @@ export default function RegisterPage() {
         }
       }
 
+      queryClient.clear()
       setAuth(userData, authToken)
-      toast.success('Account created! Let\'s set up your profile 🚀')
-      router.push('/onboarding')
+      toast.success('Account created! Welcome to the dashboard 🚀')
+      router.push('/dashboard')
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Registration failed. Please try again.')
     }
@@ -105,7 +108,7 @@ export default function RegisterPage() {
           </div>
         </motion.div>
 
-        <div className="relative z-10 text-sm text-gray-600">© 2024 AI Interview Coach</div>
+        <div className="relative z-10 text-sm text-gray-500">© 2026 AI Interview Coach</div>
       </div>
 
       {/* Right - form */}
@@ -130,61 +133,71 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              id="reg-name"
-              label="Full name"
-              type="text"
-              placeholder="Jane Doe"
-              autoComplete="name"
-              leftIcon={<User className="h-4 w-4" />}
-              error={errors.name?.message}
-              {...register('name')}
-            />
-            <Input
-              id="reg-email"
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              leftIcon={<Mail className="h-4 w-4" />}
-              error={errors.email?.message}
-              {...register('email')}
-            />
-            <Input
-              id="reg-password"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Min. 8 characters"
-              autoComplete="new-password"
-              leftIcon={<Lock className="h-4 w-4" />}
-              rightIcon={
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-600 hover:text-lavender-950 transition-colors">
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              }
-              error={errors.password?.message}
-              {...register('password')}
-            />
-            <Input
-              id="reg-confirm"
-              label="Confirm password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              leftIcon={<Lock className="h-4 w-4" />}
-              error={errors.confirmPassword?.message}
-              {...register('confirmPassword')}
-            />
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <Input
+                id="reg-name"
+                label="Full name"
+                type="text"
+                placeholder="Jane Doe"
+                autoComplete="name"
+                leftIcon={<User className="h-4 w-4" />}
+                error={errors.name?.message}
+                {...register('name')}
+              />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <Input
+                id="reg-email"
+                label="Email address"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                leftIcon={<Mail className="h-4 w-4" />}
+                error={errors.email?.message}
+                {...register('email')}
+              />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+              <Input
+                id="reg-password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Min. 8 characters"
+                autoComplete="new-password"
+                leftIcon={<Lock className="h-4 w-4" />}
+                rightIcon={
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-600 hover:text-lavender-950 transition-colors">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                }
+                error={errors.password?.message}
+                {...register('password')}
+              />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+              <Input
+                id="reg-confirm"
+                label="Confirm password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                leftIcon={<Lock className="h-4 w-4" />}
+                error={errors.confirmPassword?.message}
+                {...register('confirmPassword')}
+              />
+            </motion.div>
 
-            <Button
-              type="submit"
-              variant="glow"
-              size="lg"
-              className="w-full mt-2"
-              isLoading={isSubmitting}
-              rightIcon={<ChevronRight className="h-4 w-4" />}
-            >
-              Create Account
-            </Button>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+              <Button
+                type="submit"
+                variant="glow"
+                size="lg"
+                className="w-full mt-2"
+                isLoading={isSubmitting}
+                rightIcon={<ChevronRight className="h-4 w-4" />}
+              >
+                Create Account
+              </Button>
+            </motion.div>
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">

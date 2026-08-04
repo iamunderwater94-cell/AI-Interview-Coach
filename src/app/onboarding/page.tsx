@@ -21,16 +21,7 @@ const EXPERIENCE_LEVELS = [
   { value: 'senior', label: 'Senior', desc: '5+ years experience', icon: '⭐' },
 ]
 
-const LANGUAGES = [
-  { value: 'English', flag: '🇺🇸' },
-  { value: 'Hindi', flag: '🇮🇳' },
-  { value: 'Spanish', flag: '🇪🇸' },
-  { value: 'French', flag: '🇫🇷' },
-  { value: 'German', flag: '🇩🇪' },
-  { value: 'Portuguese', flag: '🇧🇷' },
-]
-
-const steps = ['Target Role', 'Experience', 'Language']
+const steps = ['Target Role', 'Experience']
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -45,16 +36,15 @@ export default function OnboardingPage() {
 
   const canNext =
     (step === 0 && form.targetRole) ||
-    (step === 1 && form.experienceLevel) ||
-    (step === 2 && form.preferredLanguage)
+    (step === 1 && form.experienceLevel)
 
   const handleNext = () => {
-    if (step < 2) setStep(step + 1)
+    if (step < 1) setStep(step + 1)
     else handleSubmit()
   }
 
   const handleSubmit = async () => {
-    if (!form.targetRole || !form.experienceLevel || !form.preferredLanguage) return
+    if (!form.targetRole || !form.experienceLevel) return
     setIsSubmitting(true)
     try {
       const updated = await authApi.updateOnboarding({
@@ -142,13 +132,18 @@ export default function OnboardingPage() {
                       key={role}
                       onClick={() => setForm({ ...form, targetRole: role })}
                       className={cn(
-                        'px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 text-left',
+                        'px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 text-left flex items-center justify-between',
                         form.targetRole === role
-                          ? 'bg-brand-500/20 border-brand-400 text-brand-700'
+                          ? 'bg-brand-500/20 border-brand-400 text-brand-700 shadow-glow-purple'
                           : 'bg-brand-500/5 border-brand-500/10 text-gray-600 hover:bg-brand-500/10 hover:border-brand-500/20'
                       )}
                     >
-                      {role}
+                      <span>{role}</span>
+                      {form.targetRole === role && (
+                        <div className="h-4 w-4 rounded-full bg-brand-500 flex items-center justify-center flex-shrink-0">
+                          <Check className="h-2.5 w-2.5 text-lavender-950" />
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -195,39 +190,6 @@ export default function OnboardingPage() {
                 </div>
               </motion.div>
             )}
-
-            {/* Step 2: Language */}
-            {step === 2 && (
-              <motion.div
-                key="step-2"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="flex items-center gap-2 mb-6">
-                  <Globe className="h-5 w-5 text-brand-600" />
-                  <h2 className="text-xl font-semibold text-lavender-950">Preferred interview language?</h2>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {LANGUAGES.map(({ value, flag }) => (
-                    <button
-                      key={value}
-                      onClick={() => setForm({ ...form, preferredLanguage: value })}
-                      className={cn(
-                        'flex items-center gap-3 px-4 py-3.5 rounded-xl border text-sm font-medium transition-all duration-200',
-                        form.preferredLanguage === value
-                          ? 'bg-brand-500/20 border-brand-400 text-lavender-950'
-                          : 'bg-brand-500/5 border-brand-500/10 text-gray-600 hover:bg-brand-500/10 hover:border-brand-500/20'
-                      )}
-                    >
-                      <span className="text-xl">{flag}</span>
-                      {value}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
           </AnimatePresence>
         </div>
 
@@ -252,9 +214,9 @@ export default function OnboardingPage() {
             onClick={handleNext}
             disabled={!canNext}
             isLoading={isSubmitting}
-            rightIcon={step === 2 ? undefined : <ChevronRight className="h-4 w-4" />}
+            rightIcon={step === 1 ? undefined : <ChevronRight className="h-4 w-4" />}
           >
-            {step === 2 ? 'Start Coaching 🚀' : 'Continue'}
+            {step === 1 ? 'Start Coaching 🚀' : 'Continue'}
           </Button>
         </div>
       </div>
