@@ -127,6 +127,10 @@ export function Sidebar() {
                     </Link>
                   )
                 })}
+                
+                <div className="pt-2 mt-2 border-t border-white/[0.06] dark:border-white/[0.02]">
+                  <ThemeToggle collapsed={false} />
+                </div>
               </nav>
 
               {user && (
