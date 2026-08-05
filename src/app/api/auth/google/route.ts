@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { adminAuth, db } from '@/lib/firebase-admin';
-import { generateToken } from '@/lib/auth';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
 
 export async function POST(request: Request) {
   try {
@@ -45,7 +47,11 @@ export async function POST(request: Request) {
     const userData = userDoc.data() as any;
 
     // Generate our JWT token for the session
-    const jwtToken = generateToken(uid, userData.email);
+    const jwtToken = jwt.sign(
+      { userId: uid, email: userData.email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     const response = NextResponse.json({
       user: {
