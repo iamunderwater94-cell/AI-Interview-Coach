@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     default: 'AI Interview Coach — Ace Your Next Interview',
-    template: '%s | AI Interview Coach',
+    template: 'AI Interview Coach | %s',
   },
   description:
     'Practice interviews with AI-powered feedback. Get real-time scores on technical knowledge, grammar, and clarity to land your dream job.',
