@@ -154,7 +154,11 @@
   }
 
   .gradient-text {
-    @apply inline-block bg-gradient-to-r from-brand-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent;
+    @apply inline-block bg-gradient-to-r from-brand-400 via-purple-400 to-cyan-400;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .gradient-border {
