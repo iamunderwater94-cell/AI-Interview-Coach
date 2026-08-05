@@ -32,25 +32,25 @@ export function ThemeToggle({ collapsed }: { collapsed?: boolean }) {
         <AnimatePresence mode="wait" initial={false}>
           {isDark ? (
             <motion.div
-              key="moon"
+              key="sun"
               initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
               animate={{ opacity: 1, rotate: 0, scale: 1 }}
               exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
               transition={{ duration: 0.2 }}
               className="absolute"
             >
-              <Moon className="h-4.5 w-4.5 text-brand-400" />
+              <Sun className="h-4.5 w-4.5 text-amber-500" />
             </motion.div>
           ) : (
             <motion.div
-              key="sun"
+              key="moon"
               initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
               animate={{ opacity: 1, rotate: 0, scale: 1 }}
               exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
               transition={{ duration: 0.2 }}
               className="absolute"
             >
-              <Sun className="h-4.5 w-4.5 text-amber-500" />
+              <Moon className="h-4.5 w-4.5 text-brand-400" />
             </motion.div>
           )}
         </AnimatePresence>
