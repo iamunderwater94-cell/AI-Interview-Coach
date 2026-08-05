@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/Input'
 import { authApi } from '@/lib/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { auth } from '@/lib/firebase-client'
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth'
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -44,7 +44,42 @@ export default function RegisterPage() {
     if (token) {
       router.push('/dashboard')
     }
-  }, [router])
+
+    // Check for redirect result from Google login
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth)
+        if (result) {
+          setIsGoogleLoading(true)
+          const idToken = await result.user.getIdToken()
+          
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: idToken }),
+          })
+
+          if (res.ok) {
+            const data = await res.json()
+            queryClient.clear()
+            setAuth(data.user, data.token)
+            toast.success('Account created! Welcome to the dashboard 🚀')
+            router.push('/dashboard')
+          } else {
+            const data = await res.json()
+            toast.error(`Google Sign-In failed: ${data.error || 'Server error'}`)
+          }
+        }
+      } catch (err: any) {
+        console.error(err)
+        toast.error(`Google Sign-In failed: ${err.message || err}`)
+      } finally {
+        setIsGoogleLoading(false)
+      }
+    }
+    
+    handleRedirectResult()
+  }, [router, queryClient, setAuth])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -105,6 +140,11 @@ export default function RegisterPage() {
         }
       })
       .catch((err: any) => {
+        if (err.code === 'auth/popup-blocked') {
+          toast.info('Popup blocked, redirecting to Google...')
+          signInWithRedirect(auth, provider)
+          return
+        }
         isPopupPending.current = false
         console.error(err)
         toast.error(`Google Sign-In failed: ${err.message || err}`)
