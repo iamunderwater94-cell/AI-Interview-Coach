@@ -243,8 +243,8 @@ export default function InterviewReportPage({ params }: { params: { id: string }
 
                       {ev.improvedAnswer && (
                         <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                          <p className="text-xs font-semibold text-emerald-900 mb-1">Ideal/Correct Answer:</p>
-                          <p className="text-sm text-emerald-800">{ev.improvedAnswer}</p>
+                          <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">Ideal/Correct Answer:</p>
+                          <p className="text-sm text-emerald-800 dark:text-emerald-100">{ev.improvedAnswer}</p>
                         </div>
                       )}
 

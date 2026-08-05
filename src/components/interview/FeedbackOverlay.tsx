@@ -95,8 +95,8 @@ export function FeedbackOverlay({ evaluation, isLastQuestion, onNext }: Feedback
 
         {evaluation.improvedAnswer && (
           <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3">
-            <p className="text-xs font-semibold text-emerald-900 mb-1">Ideal Answer</p>
-            <p className="text-sm text-emerald-800">{evaluation.improvedAnswer}</p>
+            <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-300 mb-1">Ideal Answer</p>
+            <p className="text-sm text-emerald-800 dark:text-emerald-100">{evaluation.improvedAnswer}</p>
           </div>
         )}
 
