@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Brain, ChevronRight, Eye, EyeOff } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -28,6 +28,7 @@ export default function LoginPage() {
   const queryClient = useQueryClient()
   const [showPassword, setShowPassword] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const isPopupPending = useRef(false)
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -68,11 +69,14 @@ export default function LoginPage() {
   }
 
   const handleGoogleSignIn = () => {
+    if (isPopupPending.current) return
+    isPopupPending.current = true
     const provider = new GoogleAuthProvider()
     
     // Call signInWithPopup strictly synchronously (no async/await before it)
     signInWithPopup(auth, provider)
       .then(async (result) => {
+        isPopupPending.current = false
         setIsGoogleLoading(true)
         try {
           const idToken = await result.user.getIdToken()
@@ -98,6 +102,7 @@ export default function LoginPage() {
         }
       })
       .catch((err: any) => {
+        isPopupPending.current = false
         console.error(err)
         toast.error(`Google Sign-In failed: ${err.message || err}`)
         setIsGoogleLoading(false)
