@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { toast } from 'sonner'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
@@ -29,6 +30,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      toast.error(`API 401 Error on ${error.config?.url}`)
       useAuthStore.getState().logout()
       if (typeof window !== 'undefined') {
         window.location.href = '/login'
