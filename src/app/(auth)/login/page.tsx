@@ -8,13 +8,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Brain, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { authApi } from '@/lib/api/auth'
 import { useAuthStore } from '@/store/authStore'
 import { auth } from '@/lib/firebase-client'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -32,6 +33,49 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+
+  useEffect(() => {
+    // Check if already logged in via our custom JWT cookie
+    const token = document.cookie.split('; ').find(row => row.startsWith('auth-token='))
+    if (token) {
+      router.push('/dashboard')
+    }
+
+    // Handle Google Sign-In redirect result
+    const checkRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth)
+        if (result) {
+          setIsGoogleLoading(true)
+          const idToken = await result.user.getIdToken()
+          
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: idToken }),
+          })
+
+          if (res.ok) {
+            const data = await res.json()
+            queryClient.clear()
+            setAuth(data.user, data.token)
+            toast.success('Welcome back! 👋')
+            router.push('/dashboard')
+          } else {
+            const data = await res.json()
+            toast.error(`Google Sign-In failed: ${data.error || 'Server error'}`)
+            setIsGoogleLoading(false)
+          }
+        }
+      } catch (err: any) {
+        console.error(err)
+        toast.error(`Google Sign-In failed: ${err.message || err}`)
+        setIsGoogleLoading(false)
+      }
+    }
+    
+    checkRedirect()
+  }, [router, queryClient, setAuth])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -62,29 +106,10 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider()
-      // Call popup BEFORE setting any loading state so the browser doesn't block it!
-      const result = await signInWithPopup(auth, provider)
-      setIsGoogleLoading(true)
-      const idToken = await result.user.getIdToken()
-
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: idToken })
-      })
-
-      if (!res.ok) throw new Error('Google auth failed')
-      const data = await res.json()
-
-      queryClient.clear()
-      setAuth(data.user, data.token)
-      toast.success('Welcome back! 👋')
-      router.push('/dashboard')
+      await signInWithRedirect(auth, provider)
     } catch (err: any) {
       console.error(err)
       toast.error(`Google Sign-In failed: ${err.message || err}`)
-    } finally {
-      setIsGoogleLoading(false)
     }
   }
 
