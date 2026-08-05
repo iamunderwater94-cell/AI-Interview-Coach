@@ -1,29 +1,34 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const interviewId = params.id
 
-    const interview = await prisma.interview.findUnique({
-      where: { id: interviewId },
-      include: {
-        questions: true,
-        evaluations: true,
-      }
-    })
+    const interviewDoc = await db.collection('interviews').doc(interviewId).get()
 
-    if (!interview) {
+    if (!interviewDoc.exists) {
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
 
-    // Format for frontend (parse JSON strings in evaluations)
+    const interview = interviewDoc.data()
+    
+    // Fetch questions
+    const questionsSnapshot = await db.collection('interviews').doc(interviewId).collection('questions').get()
+    const questions = questionsSnapshot.docs.map((doc: any) => doc.data())
+    
+    // Fetch evaluations
+    const evaluationsSnapshot = await db.collection('interviews').doc(interviewId).collection('evaluations').get()
+    const evaluations = evaluationsSnapshot.docs.map((doc: any) => doc.data())
+
+    // Format for frontend (parse JSON strings in evaluations if needed, but Firestore can store maps. Assuming they were stored as strings in Prisma, we'll keep parsing if they are strings)
     const formattedInterview = {
       ...interview,
-      evaluations: interview.evaluations.map(ev => ({
+      questions,
+      evaluations: evaluations.map((ev: any) => ({
         ...ev,
-        strengths: JSON.parse(ev.strengths),
-        weaknesses: JSON.parse(ev.weaknesses)
+        strengths: typeof ev.strengths === 'string' ? JSON.parse(ev.strengths) : ev.strengths,
+        weaknesses: typeof ev.weaknesses === 'string' ? JSON.parse(ev.weaknesses) : ev.weaknesses
       }))
     }
 

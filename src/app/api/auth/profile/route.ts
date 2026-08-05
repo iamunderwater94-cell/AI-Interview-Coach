@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
@@ -32,9 +32,11 @@ export async function PATCH(req: Request) {
     if (experienceLevel) dataToUpdate.experienceLevel = experienceLevel
     if (preferredLanguage) dataToUpdate.preferredLanguage = preferredLanguage
 
+    const usersRef = db.collection('users')
+
     if (email) {
-      const existingUser = await prisma.user.findUnique({ where: { email } })
-      if (existingUser && existingUser.id !== userId) {
+      const existingSnapshot = await usersRef.where('email', '==', email).limit(1).get()
+      if (!existingSnapshot.empty && existingSnapshot.docs[0].id !== userId) {
         return NextResponse.json({ error: 'Email already in use' }, { status: 400 })
       }
       dataToUpdate.email = email
@@ -47,10 +49,12 @@ export async function PATCH(req: Request) {
       dataToUpdate.password = await bcrypt.hash(password, 10)
     }
 
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: dataToUpdate
-    })
+    dataToUpdate.updatedAt = new Date().toISOString()
+    const userRef = usersRef.doc(userId)
+    await userRef.update(dataToUpdate)
+
+    const userDoc = await userRef.get()
+    const user: any = userDoc.data()
 
     const { password: _, ...userWithoutPassword } = user
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import jwt from 'jsonwebtoken'
 // Imports removed for dynamic loading
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev'
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
           if (resumeFile.type === 'application/pdf') {
             const PDFParser = (await import('pdf2json')).default;
             resumeText = await new Promise((resolve, reject) => {
-              const pdfParser = new PDFParser(null, 1);
+              const pdfParser = new PDFParser(null, true);
               pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
               pdfParser.on("pdfParser_dataReady", () => resolve((pdfParser as any).getRawTextContent()));
               pdfParser.parseBuffer(buffer);
@@ -170,29 +170,47 @@ export async function POST(req: Request) {
     }
 
     // Save to database
-    const interview = await prisma.interview.create({
-      data: {
-        userId: userId,
-        role,
-        difficulty,
-        experience,
-        language,
-        status: 'in_progress',
-        questions: {
-          create: questionsData.map((q: any) => ({
-            text: q.text,
-            type: q.type,
-            category: q.category,
-            hint: q.hint,
-            timeLimit: q.timeLimit
-          }))
-        }
-      },
-      include: {
-        questions: true,
-        evaluations: true
+    const interviewRef = db.collection('interviews').doc()
+    const interviewId = interviewRef.id
+    
+    const interviewData = {
+      id: interviewId,
+      userId: userId,
+      role,
+      difficulty,
+      experience,
+      language,
+      status: 'in_progress',
+      startedAt: new Date().toISOString()
+    }
+
+    const batch = db.batch()
+    batch.set(interviewRef, interviewData)
+
+    const questions: any[] = []
+    
+    questionsData.forEach((q: any) => {
+      const qRef = interviewRef.collection('questions').doc()
+      const qData = {
+        id: qRef.id,
+        interviewId,
+        text: q.text,
+        type: q.type,
+        category: q.category,
+        hint: q.hint,
+        timeLimit: q.timeLimit
       }
+      batch.set(qRef, qData)
+      questions.push(qData)
     })
+
+    await batch.commit()
+
+    const interview = {
+      ...interviewData,
+      questions,
+      evaluations: []
+    }
 
     return NextResponse.json({ interview })
   } catch (error: any) {

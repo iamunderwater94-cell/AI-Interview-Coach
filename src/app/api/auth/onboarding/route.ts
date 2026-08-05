@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev'
@@ -28,15 +28,18 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        targetRole,
-        experienceLevel,
-        preferredLanguage,
-        onboardingComplete: true
-      }
-    })
+    const userRef = db.collection('users').doc(userId)
+    const updateData = {
+      targetRole,
+      experienceLevel,
+      preferredLanguage,
+      onboardingComplete: true,
+      updatedAt: new Date().toISOString()
+    }
+    await userRef.update(updateData)
+
+    const userDoc = await userRef.get()
+    const user: any = userDoc.data()
 
     const { password: _, ...userWithoutPassword } = user
 

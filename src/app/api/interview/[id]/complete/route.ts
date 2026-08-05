@@ -1,60 +1,65 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
     const interviewId = params.id
-
-    const interview = await prisma.interview.findUnique({
-      where: { id: interviewId },
-      include: {
-        evaluations: true,
-      }
-    })
-
-    if (!interview) {
+    
+    const interviewDoc = await db.collection('interviews').doc(interviewId).get()
+    if (!interviewDoc.exists) {
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
+    
+    const interview = interviewDoc.data() as any
+    const evSnapshot = await db.collection('interviews').doc(interviewId).collection('evaluations').get()
+    const evaluations = evSnapshot.docs.map((doc: any) => doc.data())
 
     // Calculate averages
-    const evaluations = interview.evaluations
     let overallScore = 0
     let technicalAvg = 0
     let grammarAvg = 0
     let clarityAvg = 0
 
     if (evaluations.length > 0) {
-      technicalAvg = evaluations.reduce((sum, ev) => sum + ev.technicalScore, 0) / evaluations.length
-      grammarAvg = evaluations.reduce((sum, ev) => sum + ev.grammarScore, 0) / evaluations.length
-      clarityAvg = evaluations.reduce((sum, ev) => sum + ev.clarityScore, 0) / evaluations.length
-      overallScore = evaluations.reduce((sum, ev) => sum + ev.overallScore, 0) / evaluations.length
+      technicalAvg = evaluations.reduce((sum: number, ev: any) => sum + ev.technicalScore, 0) / evaluations.length
+      grammarAvg = evaluations.reduce((sum: number, ev: any) => sum + ev.grammarScore, 0) / evaluations.length
+      clarityAvg = evaluations.reduce((sum: number, ev: any) => sum + ev.clarityScore, 0) / evaluations.length
+      overallScore = evaluations.reduce((sum: number, ev: any) => sum + ev.overallScore, 0) / evaluations.length
     }
 
-    // Update interview status and scores
-    const updatedInterview = await prisma.interview.update({
-      where: { id: interviewId },
-      data: {
-        status: 'completed',
-        completedAt: new Date(),
-        overallScore,
-        technicalAvg,
-        grammarAvg,
-        clarityAvg,
-        duration: Math.floor((Date.now() - interview.startedAt.getTime()) / 1000)
-      },
-      include: {
-        questions: true,
-        evaluations: true
-      }
-    })
+    const startedAtTime = new Date(interview.startedAt).getTime()
+    const duration = Math.floor((Date.now() - startedAtTime) / 1000)
 
-    // Format for frontend (parse JSON strings in evaluations)
+    // Update interview status and scores
+    const updateData = {
+      status: 'completed',
+      completedAt: new Date().toISOString(),
+      overallScore,
+      technicalAvg,
+      grammarAvg,
+      clarityAvg,
+      duration
+    }
+    
+    await db.collection('interviews').doc(interviewId).update(updateData)
+
+    const updatedInterview = {
+      ...interview,
+      ...updateData
+    }
+
+    // Fetch questions to include in response
+    const qSnapshot = await db.collection('interviews').doc(interviewId).collection('questions').get()
+    const questions = qSnapshot.docs.map((doc: any) => doc.data())
+
+    // Format for frontend
     const formattedInterview = {
       ...updatedInterview,
-      evaluations: updatedInterview.evaluations.map(ev => ({
+      questions,
+      evaluations: evaluations.map((ev: any) => ({
         ...ev,
-        strengths: JSON.parse(ev.strengths),
-        weaknesses: JSON.parse(ev.weaknesses)
+        strengths: typeof ev.strengths === 'string' ? JSON.parse(ev.strengths) : ev.strengths,
+        weaknesses: typeof ev.weaknesses === 'string' ? JSON.parse(ev.weaknesses) : ev.weaknesses
       }))
     }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -15,9 +15,14 @@ export async function POST(req: Request) {
     }
 
     // Find the user by email
-    const user = await prisma.user.findUnique({
-      where: { email }
-    })
+    const usersRef = db.collection('users')
+    const snapshot = await usersRef.where('email', '==', email).limit(1).get()
+
+    if (snapshot.empty) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 })
+    }
+
+    const user = snapshot.docs[0].data()
 
     if (!user) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 })

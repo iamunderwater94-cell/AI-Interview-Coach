@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev'
@@ -19,9 +19,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId }
-    })
+    const userDoc = await db.collection('users').doc(decoded.userId).get()
+    
+    if (!userDoc.exists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    const user = userDoc.data()
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })

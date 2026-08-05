@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -15,11 +15,10 @@ export async function POST(req: Request) {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    })
+    const usersRef = db.collection('users')
+    const snapshot = await usersRef.where('email', '==', email).limit(1).get()
 
-    if (existingUser) {
+    if (!snapshot.empty) {
       return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 })
     }
 
@@ -28,23 +27,27 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, salt)
 
     // Create the user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name: name || '',
-        password: hashedPassword,
-      }
-    })
+    const newUserRef = usersRef.doc()
+    const userData = {
+      id: newUserRef.id,
+      email,
+      name: name || '',
+      password: hashedPassword,
+      onboardingComplete: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+    await newUserRef.set(userData)
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: userData.id, email: userData.email },
       JWT_SECRET,
       { expiresIn: '7d' } // Token expires in 7 days
     )
 
     // Don't send the password back to the client
-    const { password: _, ...userWithoutPassword } = user
+    const { password: _, ...userWithoutPassword } = userData
 
     return NextResponse.json({
       user: userWithoutPassword,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev'
@@ -25,34 +25,34 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get('limit') || '10')
     const skip = (page - 1) * limit
 
-    const total = await prisma.interview.count({
-      where: { status: 'completed', userId }
+    const interviewsRef = db.collection('interviews')
+    const snapshot = await interviewsRef.where('userId', '==', userId).where('status', '==', 'completed').get()
+    
+    let allInterviews = snapshot.docs.map((doc: any) => doc.data())
+    // Sort descending by completedAt
+    allInterviews.sort((a: any, b: any) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+    
+    const total = allInterviews.length
+    
+    // Aggregations
+    let totalScore = 0
+    let totalDuration = 0
+    allInterviews.forEach((inv: any) => {
+      totalScore += (inv.overallScore || 0)
+      totalDuration += (inv.duration || 0)
     })
+    const averageScore = total > 0 ? totalScore / total : 0
 
-    const interviews = await prisma.interview.findMany({
-      where: { status: 'completed', userId },
-      orderBy: { completedAt: 'desc' },
-      skip,
-      take: limit,
-      include: {
-        evaluations: true
-      }
-    })
-
-    const aggregations = await prisma.interview.aggregate({
-      where: { status: 'completed', userId },
-      _avg: { overallScore: true },
-      _sum: { duration: true }
-    })
+    const paginatedInterviews = allInterviews.slice(skip, skip + limit)
 
     return NextResponse.json({
-      interviews,
+      interviews: paginatedInterviews,
       total,
       pages: Math.ceil(total / limit),
       stats: {
-        averageScore: aggregations._avg.overallScore || 0,
-        totalPracticeTime: aggregations._sum.duration || 0,
-        streak: total > 0 ? 1 : 0 // Simplified streak logic
+        averageScore,
+        totalPracticeTime: totalDuration,
+        streak: total > 0 ? 1 : 0
       }
     })
   } catch (error: any) {

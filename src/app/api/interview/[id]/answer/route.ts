@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
-import prisma from '@/lib/db'
+import { db } from '@/lib/firebase-admin'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
@@ -14,14 +14,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     let codeLanguage = ''
 
     // Get the interview and question from DB first so we know the language
-    const interview = await prisma.interview.findUnique({
-      where: { id: interviewId },
-      include: { questions: true }
-    })
-
-    if (!interview) {
+    const interviewDoc = await db.collection('interviews').doc(interviewId).get()
+    if (!interviewDoc.exists) {
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
+    
+    const interviewData = interviewDoc.data() as any
+    const questionsSnapshot = await db.collection('interviews').doc(interviewId).collection('questions').get()
+    const questions = questionsSnapshot.docs.map((d: any) => d.data())
+    
+    const interview = {
+      ...interviewData,
+      questions
+    } as any
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData()
@@ -67,7 +72,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       candidateAnswer = text || ''
     }
 
-    const question = interview.questions.find(q => q.id === questionId)
+    const question = interview.questions.find((q: any) => q.id === questionId)
     if (!question) {
       return NextResponse.json({ error: 'Question not found' }, { status: 404 })
     }
@@ -166,30 +171,25 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
 
     // Save evaluation to database
-    const evaluation = await prisma.evaluation.create({
-      data: {
-        interviewId,
-        questionId,
-        technicalScore: evaluationData.technicalScore || 0,
-        grammarScore: evaluationData.grammarScore || 0,
-        clarityScore: evaluationData.clarityScore || 0,
-        overallScore: evaluationData.overallScore || 0,
-        strengths: JSON.stringify(evaluationData.strengths || ["No strengths identified."]),
-        weaknesses: JSON.stringify(evaluationData.weaknesses || ["No weaknesses identified."]),
-        userAnswer: candidateAnswer || "No answer provided.",
-        improvedAnswer: evaluationData.improvedAnswer || "No improved answer provided.",
-        feedback: evaluationData.feedback || "Good effort. Keep practicing to improve your skills."
-      }
-    })
-
-    // Map strings back to arrays for frontend
-    const formattedEvaluation = {
-      ...evaluation,
-      strengths: JSON.parse(evaluation.strengths),
-      weaknesses: JSON.parse(evaluation.weaknesses),
+    const evaluationRef = db.collection('interviews').doc(interviewId).collection('evaluations').doc()
+    const dbEvaluationData = {
+      id: evaluationRef.id,
+      interviewId,
+      questionId,
+      technicalScore: evaluationData.technicalScore || 0,
+      grammarScore: evaluationData.grammarScore || 0,
+      clarityScore: evaluationData.clarityScore || 0,
+      overallScore: evaluationData.overallScore || 0,
+      strengths: evaluationData.strengths || ["No strengths identified."],
+      weaknesses: evaluationData.weaknesses || ["No weaknesses identified."],
+      userAnswer: candidateAnswer || "No answer provided.",
+      improvedAnswer: evaluationData.improvedAnswer || "No improved answer provided.",
+      feedback: evaluationData.feedback || "Good effort. Keep practicing to improve your skills."
     }
+    
+    await evaluationRef.set(dbEvaluationData)
 
-    return NextResponse.json({ evaluation: formattedEvaluation })
+    return NextResponse.json({ evaluation: dbEvaluationData })
   } catch (error: any) {
     console.error('Error evaluating answer:', error)
     return NextResponse.json(
