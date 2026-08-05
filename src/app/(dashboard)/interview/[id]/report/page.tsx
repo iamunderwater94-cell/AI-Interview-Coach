@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Progress } from '@/components/ui/Progress'
 import { formatDate, getScoreColor, getScoreBg, getDifficultyColor } from '@/lib/utils/format'
 import { cn } from '@/lib/utils/cn'
+import { useAuthStore } from '@/store/authStore'
 import type { Interview } from '@/types/interview'
 
 interface ScoreDialProps {
@@ -66,6 +67,7 @@ function ScoreDial({ score, size = 160 }: ScoreDialProps) {
 
 export default function InterviewReportPage({ params }: { params: { id: string } }) {
   const router = useRouter()
+  const { user } = useAuthStore()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['interview', params.id],
@@ -123,7 +125,9 @@ export default function InterviewReportPage({ params }: { params: { id: string }
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-lavender-950">Interview Report</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-lavender-950">
+              {user?.name ? `${user.name}'s Interview Report` : 'Interview Report'}
+            </h1>
             <p className="text-gray-600 mt-1 text-sm">
               {interview.role} · {formatDate(interview.startedAt)} · <span className="capitalize">{interview.difficulty}</span>
             </p>
