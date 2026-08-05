@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, db } from '@/lib/firebase-admin';
+import { auth as adminAuth, db } from '@/lib/firebase-admin';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
