@@ -81,7 +81,7 @@ export default function LoginPage() {
       router.push('/dashboard')
     } catch (err: any) {
       console.error(err)
-      toast.error('Google Sign-In failed. Please try again.')
+      toast.error(`Google Sign-In failed: ${err.message || err}`)
     } finally {
       setIsGoogleLoading(false)
     }
