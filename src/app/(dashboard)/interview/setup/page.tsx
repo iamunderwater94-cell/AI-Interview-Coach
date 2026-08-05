@@ -147,19 +147,19 @@ export default function InterviewSetupPage() {
                 type="button"
                 onClick={() => setValue('difficulty', value as any, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
-                  'p-4 rounded-xl border text-center transition-all duration-200',
+                  'p-2 md:p-4 rounded-xl border text-center transition-all duration-200 flex flex-col items-center justify-center',
                   selectedDiff === value
                     ? color === 'emerald'
-                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300'
                       : color === 'yellow'
-                      ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-300'
-                      : 'bg-red-500/15 border-red-500/40 text-red-300'
-                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 hover:bg-brand-500/10'
+                      ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-700 dark:text-yellow-300'
+                      : 'bg-red-500/15 border-red-500/40 text-red-700 dark:text-red-300'
+                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 dark:text-gray-400 hover:bg-brand-500/10'
                 )}
               >
-                <div className="text-2xl mb-1">{emoji}</div>
-                <div className="font-semibold text-sm">{label}</div>
-                <div className="text-xs opacity-70 mt-0.5">{desc}</div>
+                <div className="text-xl md:text-2xl mb-1">{emoji}</div>
+                <div className="font-semibold text-xs md:text-sm">{label}</div>
+                <div className="text-[10px] md:text-xs opacity-80 mt-0.5 leading-tight break-words">{desc}</div>
               </button>
             ))}
           </div>
@@ -179,15 +179,19 @@ export default function InterviewSetupPage() {
                 type="button"
                 onClick={() => setValue('experience', value as any, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
-                  'p-4 rounded-xl border text-left transition-all duration-200',
+                  'p-2 md:p-4 rounded-xl border text-left transition-all duration-200',
                   selectedExp === value
-                    ? 'bg-purple-100 border-purple-500 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
-                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 hover:bg-brand-500/10'
+                    ? 'bg-brand-500/15 border-brand-500/40 text-brand-700 dark:text-brand-300'
+                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 dark:text-gray-400 hover:bg-brand-500/10'
                 )}
               >
-                <div className="text-2xl mb-1">{emoji}</div>
-                <div className="font-semibold text-sm">{label}</div>
-                <div className="text-xs opacity-70 mt-0.5">{desc}</div>
+                <div className="flex items-center gap-3">
+                  <div className="text-xl md:text-2xl">{emoji}</div>
+                  <div>
+                    <div className="font-semibold text-xs md:text-sm">{label}</div>
+                    <div className="text-[10px] md:text-xs opacity-80 mt-0.5">{desc}</div>
+                  </div>
+                </div>
               </button>
             ))}
           </div>
@@ -207,10 +211,10 @@ export default function InterviewSetupPage() {
                 type="button"
                 onClick={() => setValue('language', lang, { shouldValidate: true, shouldDirty: true })}
                 className={cn(
-                  'px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200',
+                  'p-2 md:p-3 rounded-xl border text-xs md:text-sm font-medium transition-all duration-200',
                   selectedLang === lang
-                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
-                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 hover:bg-brand-500/10'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300'
+                    : 'bg-white/[0.03] border-brand-500/10 text-gray-600 dark:text-gray-400 hover:bg-brand-500/10'
                 )}
               >
                 {lang}
