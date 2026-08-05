@@ -13,11 +13,11 @@ import {
   Zap,
   User,
   Settings,
-  Brain,
   Trophy,
   Menu,
   X,
 } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { cn } from '@/lib/utils/cn'
 import { useAuthStore } from '@/store/authStore'
 import { authApi } from '@/lib/api/auth'
@@ -58,9 +58,7 @@ export function Sidebar() {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-950 border-b border-white/[0.06] shrink-0 z-40">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-            <Brain className="h-4 w-4 text-lavender-950" />
-          </div>
+          <Logo size={32} />
           <span className="font-bold text-lavender-950 text-sm">AI Coach</span>
         </div>
         <button
@@ -91,9 +89,7 @@ export function Sidebar() {
             >
               <div className="flex items-center justify-between px-4 py-4 border-b border-white/[0.06]">
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-                    <Brain className="h-5 w-5 text-lavender-950" />
-                  </div>
+                  <Logo size={36} />
                   <div>
                     <span className="font-bold text-lavender-950 text-sm whitespace-nowrap">AI Interview</span>
                     <span className="block text-[10px] text-brand-600 font-medium whitespace-nowrap">Coach</span>
@@ -167,9 +163,7 @@ export function Sidebar() {
       >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.06]">
-        <div className="flex-shrink-0 h-9 w-9 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-          <Brain className="h-5 w-5 text-lavender-950" />
-        </div>
+        <Logo size={36} />
         <AnimatePresence>
           {!collapsed && (
             <motion.div

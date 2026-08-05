@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
-import { Brain, Briefcase, GraduationCap, Globe, ChevronRight, ChevronLeft, Check } from 'lucide-react'
+import { Sparkles, Target, Briefcase, Zap, ArrowRight, Loader2, CheckCircle2, GraduationCap, Globe, ChevronRight, ChevronLeft, Check } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { Button } from '@/components/ui/Button'
 import { authApi } from '@/lib/api/auth'
 import { useAuthStore } from '@/store/authStore'
@@ -72,9 +73,7 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center">
-              <Brain className="h-6 w-6 text-lavender-950" />
-            </div>
+            <Logo size={48} />
           </div>
           <h1 className="text-3xl font-bold text-lavender-950 mb-2">
             Let&apos;s personalize your experience

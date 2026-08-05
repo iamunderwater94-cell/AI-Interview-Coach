@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Award,
 } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { Button } from '@/components/ui/Button'
 
 const features = [
@@ -102,9 +103,7 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/[0.06] backdrop-blur-sm">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-            <Brain className="h-5 w-5 text-lavender-950" />
-          </div>
+          <Logo size={36} />
           <span className="font-bold text-lavender-950 text-lg">AI Interview <span className="gradient-text">Coach</span></span>
         </Link>
         <div className="flex items-center gap-3">

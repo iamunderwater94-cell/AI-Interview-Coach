@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Brain } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 
 const TIPS = [
   'Structuring your answers using the STAR method increases clarity scores by 40%...',
@@ -58,9 +59,7 @@ export function LoadingScreen({ role, difficulty }: LoadingScreenProps) {
         <div className="relative mx-auto mb-8 w-24 h-24">
           <div className="absolute inset-0 rounded-full bg-brand-500/20 animate-ping" style={{ animationDuration: '2s' }} />
           <div className="absolute inset-2 rounded-full bg-brand-500/30 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
-          <div className="relative h-24 w-24 rounded-full bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-            <Brain className="h-12 w-12 text-lavender-950" />
-          </div>
+          <Logo size={80} />
         </div>
 
         <h2 className="text-2xl font-bold text-lavender-950 mb-2">

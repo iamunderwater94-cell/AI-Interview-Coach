@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { Mail, Brain, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Mail, ArrowRight, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
@@ -43,9 +44,7 @@ export default function ForgotPasswordPage() {
         className="relative w-full max-w-md"
       >
         <Link href="/" className="flex items-center gap-2.5 mb-8">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center">
-            <Brain className="h-5 w-5 text-lavender-950" />
-          </div>
+          <Logo size={48} />
           <span className="font-bold text-lavender-950">AI Interview Coach</span>
         </Link>
 

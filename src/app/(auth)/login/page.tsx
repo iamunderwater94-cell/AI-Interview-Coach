@@ -6,7 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Brain, ChevronRight, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ChevronRight, Eye, EyeOff } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
@@ -159,9 +160,7 @@ export default function LoginPage() {
 
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
-              <Brain className="h-6 w-6 text-lavender-950" />
-            </div>
+            <Logo size={40} />
             <span className="font-bold text-lavender-950 text-xl">AI Interview Coach</span>
           </Link>
         </div>
