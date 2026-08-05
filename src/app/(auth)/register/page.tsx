@@ -65,10 +65,11 @@ export default function RegisterPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true)
     try {
       const provider = new GoogleAuthProvider()
+      // Call popup BEFORE setting any loading state so the browser doesn't block it!
       const result = await signInWithPopup(auth, provider)
+      setIsGoogleLoading(true)
       const idToken = await result.user.getIdToken()
 
       const res = await fetch('/api/auth/google', {
