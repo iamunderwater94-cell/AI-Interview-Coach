@@ -169,6 +169,10 @@ export async function POST(req: Request) {
       }
     }
 
+    // Fetch user name
+    const userDoc = await db.collection('users').doc(userId).get()
+    const userName = userDoc.exists ? userDoc.data()?.name || 'Unknown User' : 'Unknown User'
+
     // Save to database
     const interviewRef = db.collection('interviews').doc()
     const interviewId = interviewRef.id
@@ -176,6 +180,7 @@ export async function POST(req: Request) {
     const interviewData = {
       id: interviewId,
       userId: userId,
+      userName: userName,
       role,
       difficulty,
       experience,
