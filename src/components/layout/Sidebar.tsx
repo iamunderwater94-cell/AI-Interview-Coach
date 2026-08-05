@@ -56,7 +56,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-lavender-50/95 border-b border-white/[0.06] backdrop-blur-xl shrink-0 z-40">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-lavender-50 border-b border-white/[0.06] shrink-0 z-40">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
             <Brain className="h-4 w-4 text-lavender-950" />
@@ -157,7 +157,7 @@ export function Sidebar() {
       <motion.aside
         animate={{ width: collapsed ? 72 : 256 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="hidden md:flex relative flex-col h-screen bg-lavender-50/95 border-r border-white/[0.06] backdrop-blur-xl flex-shrink-0 overflow-hidden"
+        className="hidden md:flex relative flex-col h-screen bg-lavender-50 border-r border-white/[0.06] flex-shrink-0 overflow-hidden"
         onMouseEnter={() => setCollapsed(false)}
         onMouseLeave={() => setCollapsed(true)}
       >
