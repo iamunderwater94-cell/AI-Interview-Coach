@@ -210,9 +210,7 @@ export default function RegisterPage() {
           className="relative w-full max-w-md"
         >
           <Link href="/" className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center">
-              <Brain className="h-5 w-5 text-lavender-950" />
-            </div>
+            <Logo size={36} />
             <span className="font-bold text-lavender-950">AI Interview Coach</span>
           </Link>
 
