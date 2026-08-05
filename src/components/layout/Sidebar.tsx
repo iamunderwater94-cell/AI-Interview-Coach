@@ -56,7 +56,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-lavender-50 border-b border-white/[0.06] shrink-0 z-40">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-950 border-b border-white/[0.06] shrink-0 z-40">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-brand-500 to-cyan-500 flex items-center justify-center shadow-glow-purple">
             <Brain className="h-4 w-4 text-lavender-950" />
@@ -87,7 +87,7 @@ export function Sidebar() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-64 bg-lavender-50 border-r border-white/[0.06] shadow-2xl z-50 md:hidden flex flex-col"
+              className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-950 border-r border-white/[0.06] shadow-2xl z-50 md:hidden flex flex-col"
             >
               <div className="flex items-center justify-between px-4 py-4 border-b border-white/[0.06]">
                 <div className="flex items-center gap-3">
