@@ -301,7 +301,7 @@ export default function RegisterPage() {
                 type="button"
                 variant="outline"
                 size="lg"
-                className="w-full flex items-center justify-center gap-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
                 onClick={handleGoogleSignIn}
                 isLoading={isGoogleLoading}
               >
