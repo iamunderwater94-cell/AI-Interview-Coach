@@ -67,32 +67,41 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, provider)
-      setIsGoogleLoading(true)
-      const idToken = await result.user.getIdToken()
+  const handleGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider()
+    
+    // Call signInWithPopup strictly synchronously (no async/await before it)
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        setIsGoogleLoading(true)
+        try {
+          const idToken = await result.user.getIdToken()
 
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: idToken })
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: idToken })
+          })
+
+          if (!res.ok) throw new Error('Google auth failed')
+          const data = await res.json()
+
+          queryClient.clear()
+          setAuth(data.user, data.token)
+          toast.success('Welcome back! 👋')
+          router.push('/dashboard')
+        } catch (err: any) {
+          console.error(err)
+          toast.error(`Google Sign-In failed: ${err.message || err}`)
+        } finally {
+          setIsGoogleLoading(false)
+        }
       })
-
-      if (!res.ok) throw new Error('Google auth failed')
-      const data = await res.json()
-
-      queryClient.clear()
-      setAuth(data.user, data.token)
-      toast.success('Welcome back! 👋')
-      router.push('/dashboard')
-    } catch (err: any) {
-      console.error(err)
-      toast.error(`Google Sign-In failed: ${err.message || err}`)
-    } finally {
-      setIsGoogleLoading(false)
-    }
+      .catch((err: any) => {
+        console.error(err)
+        toast.error(`Google Sign-In failed: ${err.message || err}`)
+        setIsGoogleLoading(false)
+      })
   }
 
   return (
